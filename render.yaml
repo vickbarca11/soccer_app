@@ -3,8 +3,8 @@ services:
     name: backend
     env: docker
     plan: free
-    repo: https://github.com/vickbarca11/soccer_app  # Optional if deploying from GitHub
     dockerfilePath: data-backend/Dockerfile
+    contextPath: data-backend
     envVars:
       - key: PORT
         value: 8000
@@ -14,6 +14,7 @@ services:
     env: docker
     plan: free
     dockerfilePath: frontend/Dockerfile
+    contextPath: frontend
     envVars:
       - key: PORT
         value: 8501
