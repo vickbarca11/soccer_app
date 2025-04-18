@@ -1,15 +1,23 @@
-version: '3'
 services:
-  backend:
-    build: ./data-backend
-    ports:
-      - "8000:8000"
+  - type: web
+    name: backend
+    env: docker
+    plan: free
+    dockerfilePath: ./data-backend/Dockerfile
+    buildContext: ./data-backend
+    envVars:
+      - key: PORT
+        value: 8000
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "8501:8501"
-    depends_on:
+  - type: web
+    name: frontend
+    env: docker
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    buildContext: ./frontend
+    envVars:
+      - key: PORT
+        value: 8501
+    dependsOn:
       - backend
-
 
