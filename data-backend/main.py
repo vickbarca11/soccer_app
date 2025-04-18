@@ -97,6 +97,12 @@ def epl_outcomemodel(position_away, position_home, temperature_day, wind_speed, 
     prediction = model_eplmatches.predict_proba(df)[0][1]
     return prediction
 
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+
 @app.get("/models")
 def get_models():
     return {

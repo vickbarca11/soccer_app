@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_navigation_bar import st_navbar
+# from streamlit_navigation_bar import st_navbar
 import pandas as pd
 import joblib
 import plotly.express as px
@@ -10,6 +10,7 @@ import base64
 from PIL import Image, ImageOps
 import numpy as np
 import requests
+from streamlit_option_menu import option_menu
 
 
 def clean_categories(X):
@@ -22,9 +23,18 @@ st.set_page_config(layout="centered", initial_sidebar_state='expanded')
 
 # page = st_navbar(['Home', 'Prediction Tools', 'References', 'About me'])
 
-st.sidebar.markdown("#### ⚽ Soccer Application:")
-page = st.sidebar.selectbox("", ['Home', 'Prediction Tools', 'References', 'About me'])
+# st.sidebar.markdown("#### ⚽ Soccer Application:")
+# page = st.sidebar.selectbox("", ['Home', 'Prediction Tools', 'References', 'About me'])
 
+
+page = option_menu(
+    menu_title=None,  # No title to simulate a navbar
+    options=["Home", "Prediction Tools", "References", "About me"],
+    icons=["house", "tools", "book", "person"],  # Optional
+    menu_icon="cast",  
+    default_index=0,
+    orientation="horizontal"  # Here's the navbar style
+)
 
 if page == "Home":
     st.title("INTRODUCTION")

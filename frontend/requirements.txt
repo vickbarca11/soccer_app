@@ -3,7 +3,7 @@ seaborn
 pandas
 requests
 matplotlib
-streamlit-navigation-bar
+streamlit-option-menu
 joblib
 plotly
 Pillow
