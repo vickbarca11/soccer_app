@@ -3,8 +3,8 @@ services:
     name: backend
     env: docker
     plan: free
-    dockerfilePath: ./data-backend/Dockerfile
-    buildContext: ./data-backend
+    repo: https://github.com/your-username/your-repo  # Optional if deploying from GitHub
+    dockerfilePath: data-backend/Dockerfile
     envVars:
       - key: PORT
         value: 8000
@@ -13,11 +13,7 @@ services:
     name: frontend
     env: docker
     plan: free
-    dockerfilePath: ./frontend/Dockerfile
-    buildContext: ./frontend
+    dockerfilePath: frontend/Dockerfile
     envVars:
       - key: PORT
         value: 8501
-    dependsOn:
-      - backend
-
