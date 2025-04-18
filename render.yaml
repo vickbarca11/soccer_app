@@ -3,7 +3,7 @@ services:
     name: backend
     env: docker
     plan: free
-    repo: https://github.com/your-username/your-repo  # Optional if deploying from GitHub
+    repo: https://github.com/vickbarca11/soccer_app  # Optional if deploying from GitHub
     dockerfilePath: data-backend/Dockerfile
     envVars:
       - key: PORT
