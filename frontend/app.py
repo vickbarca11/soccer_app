@@ -414,7 +414,7 @@ if page == 'Prediction Tools':
             # response = requests.post("http://backend:8000/predict/goals/epl", json=input_data)
             # response = requests.post("http://localhost:8000/predict", json=input_data)
             # NEW (Render-friendly)
-            response = requests.post("https://backend-qhog.onrender.com/predict/goalsepl", json=input_data)
+            response = requests.post("https://backend-qhog.onrender.com/predict/goals/epl", json=input_data)
 
             if response.status_code == 200:
                 result = response.json()
