@@ -195,7 +195,9 @@ if page == 'Prediction Tools':
 
         # Send request to FastAPI
         # response = requests.post("http://127.0.0.1:8000/predict/matchoutcome/epl", json=input_data)
-        response = requests.post("http://backend:8000/predict/matchoutcome/epl", json=input_data)
+        # response = requests.post("http://backend:8000/predict/matchoutcome/epl", json=input_data)
+        # NEW (Render-friendly)
+        response = requests.post("https://backend-qhog.onrender.com/predict/matchoutcome/epl", json=input_data)
 
         if response.status_code == 200:
             result = response.json()
@@ -409,8 +411,10 @@ if page == 'Prediction Tools':
             # Send request to FastAPI
             # response = requests.post("http://127.0.0.1:8000/predict/goals/epl", json=input_data)
 
-            response = requests.post("http://backend:8000/predict/goals/epl", json=input_data)
+            # response = requests.post("http://backend:8000/predict/goals/epl", json=input_data)
             # response = requests.post("http://localhost:8000/predict", json=input_data)
+            # NEW (Render-friendly)
+            response = requests.post("https://backend-qhog.onrender.com/predict/goalsepl", json=input_data)
 
             if response.status_code == 200:
                 result = response.json()
@@ -620,7 +624,9 @@ if page == 'Prediction Tools':
 
             # Send request to FastAPI
             # response = requests.post("http://127.0.0.1:8000/predict/goals/messi", json=input_data)
-            response = requests.post("http://backend:8000/predict/goals/messi", json=input_data)
+            # response = requests.post("http://backend:8000/predict/goals/messi", json=input_data)
+            # NEW (Render-friendly)
+            response = requests.post("https://backend-qhog.onrender.com/predict/goals/messi", json=input_data)
 
             if response.status_code == 200:
                 result = response.json()
