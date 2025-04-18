@@ -22,7 +22,7 @@ st.set_page_config(layout="centered", initial_sidebar_state='expanded')
 
 # page = st_navbar(['Home', 'Prediction Tools', 'References', 'About me'])
 
-st.sidebar.markdown("#### 🔩 Select a tab:")
+st.sidebar.markdown("#### ⚽ Soccer Application:")
 page = st.sidebar.selectbox("", ['Home', 'Prediction Tools', 'References', 'About me'])
 
 
