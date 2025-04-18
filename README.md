@@ -1,4 +1,4 @@
-![alt text](img/banner.jpg)
+![alt text](frontend/img/banner.jpg)
 # **CAPSTONE PROJECT** (Galvanize DDI Cohort 11) - _**Analyzing soccer goals and match outcomes**_ 
 _by Victor Chang_
 
@@ -143,7 +143,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 
     model_rf.fit(X_train, y_train)
     ```
-    ![alt text](img/epl_matches_pipeline.png)
+    ![alt text](frontend/img/epl_matches_pipeline.png)
 
 #### Evaluating the model for accuracy, precision, and recall:
 - **Random Forest Classifier Model Evaluation**:
@@ -155,7 +155,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred_rf))
     ```
-    ![alt text](img/epl_matches_model_eval.png)
+    ![alt text](frontend/img/epl_matches_model_eval.png)
     
 #### Perform cross-validation to split the train, testing samples and rerun the model:
 - **Random Forest Classifier Cross Validation**:
@@ -222,7 +222,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 
     model_rf.fit(X_train, y_train)
     ```
-    ![alt text](img/epl_events_pipeline.png)
+    ![alt text](frontend/img/epl_events_pipeline.png)
 
 #### Evaluating the model for accuracy, precision, and recall:
 - **Random Forest Classifier Model Evaluation**:
@@ -234,7 +234,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred_rf))
     ```
-    ![alt text](img/epl_events_model_eval.png)
+    ![alt text](frontend/img/epl_events_model_eval.png)
     
 #### Perform cross-validation to split the train, testing samples and rerun the model:
 - **Random Forest Classifier Cross Validation**:
@@ -255,8 +255,8 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 
 # **Model Comparisons**
 ## English Premier League Home Team Winning Predictions:
-![alt text](img/epl_match_table_top.png) ![alt text](img/epl_match_table_bottom.png)
-![alt text](img/epl_match_hum_press.png)
+![alt text](frontend/img/epl_match_table_top.png) ![alt text](frontend/img/epl_match_table_bottom.png)
+![alt text](frontend/img/epl_match_hum_press.png)
 #### Current Weather Updates at 1:30pm
 * Home Stadium: St. James' Park
 * Temperature: 14C
@@ -266,14 +266,14 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 * Cloud Coverage: Seems clear ~ 0%
 ### The two images above were captured around 1:30pm (EST) on April 16th, 1 hour before the start of the match. Newcastle United is hosting Crystal Palace at their home stadium. Newcastle United is ranked 4th in the table, while Crystal Palace is ranked 12th. The probability online shows in favor of Newcastle United winning at 58%. The app below with defined parameters as close as possible show us the probability of Newcastle winning at 54.18%. 
 
-![alt text](img/epl_match_app_top.png) ![alt text](img/epl_match_app_bottom.png)
+![alt text](frontend/img/epl_match_app_top.png) ![alt text](frontend/img/epl_match_app_bottom.png)
 
 ## English Premier League Goal Scoring Predictions:
-![alt text](img/epl_match_ars_goal.png)
+![alt text](frontend/img/epl_match_ars_goal.png)
 
 ### This goal was scored by Arsenal's Declan Rice on March 9th against Manchester United during a regular premier league season match. The goal was scored between the 73rd and 74th minute, by Declan Rice (midfielder) during a regular play. Adjusting the parameters below to match this play as close as possible, we see that the probability of scoring was about 54.36% for this shot. 
 
-![alt text](img/epl_match_ars_goal_app_top.png) ![alt text](img/epl_match_ars_goal_app_bottom.png)
+![alt text](frontend/img/epl_match_ars_goal_app_top.png) ![alt text](frontend/img/epl_match_ars_goal_app_bottom.png)
 
 # **Final Thoughts**
 Both tools in the application show great promise in predictions. Predicting the outcome of a match should inherently be easier than predicting the exact moment someone is going to score in a match. So, it might be best to look at the scoring prediction tool as more of a guide in how one should shoot to score more goals. The outcome predictor tool will need testing to confirm its reliability and will most definitely need refinement as the league continues to go on. 
