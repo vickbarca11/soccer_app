@@ -644,7 +644,7 @@ if page == 'Prediction Tools':
 if page == "References":
     doc_page = st.sidebar.radio("**Go to**", ["GitHub", "SportMonks", "Statsbomb"])
     if doc_page == "GitHub":
-        st.sidebar.link_button("🚀 GitHub Repo", url="https://github.com/vickbarca11/soccer_predictor_app", type="primary")
+        st.sidebar.link_button("🚀 GitHub Repo", url="https://github.com/vickbarca11/soccer_app", type="primary")
     elif doc_page == "SportMonks":
         st.sidebar.link_button("🚀 SportMonks", url="https://www.sportmonks.com/", type="primary")
         st.markdown("A great beginner tutorial for using the SportMonks API with python:")
