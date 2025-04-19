@@ -77,7 +77,7 @@ def messi_goalsmodel(match_period, minute_in_half, play_pattern, under_pressure,
 class eploutcomedata(BaseModel):
     position_away: float
     position_home: float
-    temperature_day: float
+    match_temperature: float
     wind_speed: float	
     humidity: float
     pressure: float
@@ -86,10 +86,10 @@ class eploutcomedata(BaseModel):
     time_of_day: str
 
 # Model wrapper
-def epl_outcomemodel(position_away, position_home, temperature_day, wind_speed, humidity, pressure, clouds, name, time_of_day):
+def epl_outcomemodel(position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, name, time_of_day):
 
-    columns = ['position_away', 'position_home', 'temperature_day', 'wind_speed', 'humidity', 'pressure', 'clouds', 'name', 'time_of_day']
-    features = [position_away, position_home, temperature_day, wind_speed, humidity, pressure, clouds, name, time_of_day]
+    columns = ['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'name', 'time_of_day']
+    features = [position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, name, time_of_day]
 
     df = pd.DataFrame([features], columns=columns)
     df=clean_categories(df)
@@ -130,6 +130,6 @@ def predict_messigoals(data: messigoaldata):
 # Prediction route for EPL match outcomes
 @app.post("/predict/matchoutcome/epl")
 def predict_eplmatchoutcome(data: eploutcomedata):
-    prediction = epl_outcomemodel(data.position_away, data.position_home, data.temperature_day, data.wind_speed, data.humidity, data.pressure, data.clouds, data.name, data.time_of_day)
+    prediction = epl_outcomemodel(data.position_away, data.position_home, data.match_temperature, data.wind_speed, data.humidity, data.pressure, data.clouds, data.name, data.time_of_day)
     
     return {"prediction": prediction}

@@ -20,13 +20,6 @@ def clean_categories(X):
 st.set_page_config(layout="centered", initial_sidebar_state='expanded')
 
 
-
-# page = st_navbar(['Home', 'Prediction Tools', 'References', 'About me'])
-
-# st.sidebar.markdown("#### ⚽ Soccer Application:")
-# page = st.sidebar.selectbox("", ['Home', 'Prediction Tools', 'References', 'About me'])
-
-
 page = option_menu(
     menu_title=None,  # No title to simulate a navbar
     options=["Home", "Prediction Tools", "References", "About me"],
@@ -132,7 +125,7 @@ if page == 'Prediction Tools':
 
         if important_features == True:
             ## Feature Importances
-            numeric_features = ['temperature_day', 'wind_speed',	'humidity',	'pressure',	'clouds']
+            numeric_features = ['match_temperature', 'wind_speed',	'humidity',	'pressure',	'clouds']
             categorical_features = ['position_away', 'position_home', 'name', 'time_of_day']
 
             importances = model.named_steps['classifier'].feature_importances_
@@ -192,7 +185,7 @@ if page == 'Prediction Tools':
         away_position_list = [float(i) for i in range(1,21) if i != home_position] 
         away_position = st.selectbox("🟥 _**Choose the away team's current standing on the table:**_", away_position_list, key="epl_away_position")
 
-        day_temp = st.slider("🌡️ _**Choose temperature at the start of the match (Celsius):**_", -10.68, 33.06, 11.0, key="epl_day_temp")
+        match_temp = st.slider("🌡️ _**Choose temperature at the start of the match (Celsius):**_", -10.68, 33.06, 11.0, key="epl_match_temp")
         wind_speeds = st.slider("🌀 _**Choose the wind speed at the start of the match (meters/second):**_", 0.95, 20.12, 6.0, key="epl_wind_speeds")
         humidity_level = st.slider("🌫️ _**Choose the humidity percentage at the start of the match:**_", 20.0, 100.00, 70.0, key="epl_humidity")
         pressure_amount = st.slider("🥵 _**Choose the atmospheric pressure at the start of the match (millibars):**_", 964.0, 1043.0, 1014.0, key="epl_pressure")
@@ -200,7 +193,7 @@ if page == 'Prediction Tools':
         
         time = st.selectbox("⌛ _**Choose if the match was played earlier in the day (before or at 2:30pm) or later in day (after 2:30pm):**_", time_in_day, key="epl_match_time")
 
-        input_data = {'position_away':away_position, 'position_home':home_position, 'temperature_day':day_temp, 'wind_speed':wind_speeds, 
+        input_data = {'position_away':away_position, 'position_home':home_position, 'match_temperature':match_temp, 'wind_speed':wind_speeds, 
                     'humidity':humidity_level, 'pressure':pressure_amount, 'clouds':cloudiness, 'name':pitch_name, 'time_of_day':time}
 
         # Send request to FastAPI

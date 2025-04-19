@@ -42,7 +42,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 | `position_away`    | 1133 non-null       | float64    | The current standing of the away team                         |
 | `position_home`    | 1133 non-null       | float64    | The current standing of the home team                         |
 | `winner_home`      | 1133 non-null       | int32      | If the home team won that match                               |
-| `temperature_day`  | 1133 non-null       | float64    | The day temperature recorded that day                         |
+| `match_temperature`  | 1133 non-null       | float64    | The temperature recorded that match                         |
 | `wind_speed`       | 1133 non-null       | float64    | The speed of winds                                            |
 | `humidity`         | 1133 non-null       | float64    | Percentage of humidity                                        |
 | `pressure`         | 1133 non-null       | float64    | The amount of atmospheric pressure                            |
@@ -75,13 +75,14 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 2. Fixture, weather, and venue data were gathered for each season from 2020 to 2025 (5 seasons)
 3. The data for all five seasons were combined into one expanded dataframe and saved as a CSV file.
 4. Percent signs were removed from humidity and clouds.
-5. A few extreme (273C) temperature values were removed.
-6. Missing or Null values for temperature, wind speeds, and pressure were filled with mean values. 
-7. The starting at column was divided into year, month, day, and time.
-8. Time of day column was created to divide games that were before or after 2:30pm. 
-9. Null values for position at home and winner at home were dropped. 
-10. Winner at home data type was changed to integer. 
-11. Rows where stadiums value coutns were less than were also removed.
+5. Temperature values were matches to specific match time.
+6. A few extreme (273C) temperature values were removed.
+7. Missing or Null values for temperature, wind speeds, and pressure were filled with mean values. 
+8. The starting at column was divided into year, month, day, and time.
+9. Time of day column was created to divide games that were before or after 2:30pm. 
+10. Null values for position at home and winner at home were dropped. 
+11. Winner at home data type was changed to integer. 
+12. Rows where stadiums value coutns were less than were also removed.
 
 ## Statsbombpy
 1. The dataset gathered was from the statsbombby open data for the English Premier League 2015/2016 season.
@@ -101,7 +102,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 #### Dividing the dataset into X and y:
 - **Features (`X` and `y`)**:
     ```python
-    X = team_shortened[['position_away', 'position_home', 'temperature_day', 'wind_speed', 'humidity', 'pressure', 'clouds', 'name', 'time_of_day']]
+    X = team_shortened[['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'name', 'time_of_day']]
     y = team_shortened['winner_home']
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -112,7 +113,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 - **Pipeline**:
     ```python
     # First, let's pick out which columns are numeric vs. categorical
-    numeric_features = ['temperature_day', 'wind_speed', 'humidity', 'pressure', 'clouds']
+    numeric_features = ['match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds']
 
     categorical_features = ['position_away', 'position_home', 'name', 'time_of_day']
 
@@ -171,8 +172,8 @@ The dataset gathered had multiple lines of data, but the actual model was only f
     print("MSE scores for each fold:", mse_scores)
     print("Average MSE:", np.mean(mse_scores))
     ```
-    #### MSE scores for each fold: [0.35211268 0.34982332 0.38869258 0.34982332]
-    #### Average MSE: 0.36011297466779474
+    #### MSE scores for each fold: [0.36971831 0.33922261 0.39929329 0.34275618]
+    #### Average MSE: 0.36274759866620215
 
 ## Statsbombpy
 ### English Premier League Goal Scoring: 
