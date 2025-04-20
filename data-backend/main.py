@@ -33,7 +33,6 @@ def get_models():
         ]
     }
 
-
 # Load model for EPL matches
 model_eplmatches = joblib.load("eplmatches5ymodel_rf.pkl")
 
@@ -46,14 +45,15 @@ class eploutcomedata(BaseModel):
     humidity: float
     pressure: float
     clouds: float
-    name: str
+    team_name_home: str
+    team_name_away: str
     time_of_day: str
 
 # Model wrapper
-def epl_outcomemodel(position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, name, time_of_day):
+def epl_outcomemodel(position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, team_name_home, team_name_away, time_of_day):
 
-    columns = ['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'name', 'time_of_day']
-    features = [position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, name, time_of_day]
+    columns = ['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'team_name_home', 'team_name_away', 'time_of_day']
+    features = [position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, team_name_home, team_name_away, time_of_day]
 
     df = pd.DataFrame([features], columns=columns)
     df=clean_categories(df)
@@ -64,7 +64,7 @@ def epl_outcomemodel(position_away, position_home, match_temperature, wind_speed
 # Prediction route for EPL match outcomes
 @app.post("/predict/matchoutcome/epl")
 def predict_eplmatchoutcome(data: eploutcomedata):
-    prediction = epl_outcomemodel(data.position_away, data.position_home, data.match_temperature, data.wind_speed, data.humidity, data.pressure, data.clouds, data.name, data.time_of_day)
+    prediction = epl_outcomemodel(data.position_away, data.position_home, data.match_temperature, data.wind_speed, data.humidity, data.pressure, data.clouds, data.team_name_home, data.team_name_away, data.time_of_day)
     
     return {"prediction": prediction}
 
@@ -84,27 +84,21 @@ class laligaoutcomedata(BaseModel):
     humidity: float
     pressure: float
     clouds: float
-    name: str
+    team_name_home: str
+    team_name_away: str
     time_of_day: str
 
 # Model wrapper
-def laliga_outcomemodel(position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, name, time_of_day):
+def laliga_outcomemodel(position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, team_name_home, team_name_away, time_of_day):
 
-    columns = ['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'name', 'time_of_day']
-    features = [position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, name, time_of_day]
+    columns = ['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'team_name_home', 'team_name_away', 'time_of_day']
+    features = [position_away, position_home, match_temperature, wind_speed, humidity, pressure, clouds, team_name_home, team_name_away, time_of_day]
 
     df = pd.DataFrame([features], columns=columns)
     df=clean_categories(df)
     
     prediction = model_laligamatches.predict_proba(df)[0][1]
     return prediction
-
-# Prediction route for EPL match outcomes
-@app.post("/predict/matchoutcome/laliga")
-def predict_laligamatchoutcome(data: laligaoutcomedata):
-    prediction = laliga_outcomemodel(data.position_away, data.position_home, data.match_temperature, data.wind_speed, data.humidity, data.pressure, data.clouds, data.name, data.time_of_day)
-    
-    return {"prediction": prediction}
 
 
 
