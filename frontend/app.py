@@ -261,7 +261,7 @@ if page == 'Prediction Tools':
         """, unsafe_allow_html=True)
             
             laliga_match_prob_container = st.empty()
-            image = Image.open('img/epl.jpg')
+            image = Image.open('img/laliga.jpg')
             st.image(image)
 
             # Load trained model pipeline
@@ -326,14 +326,14 @@ if page == 'Prediction Tools':
             team_home = st.selectbox("⬜ _**Choose a home_team**_", home_team, key= "laliga_home_team")
             for team_name in home_team:
                 if team_home == team_name:
-                    image_laliga_team = Image.open(f'../img_laliga/{team_name}.jpg')
+                    image_laliga_team = Image.open(f'img_laliga/{team_name}.jpg')
                     st.image(image_laliga_team)
 
             team_away_list = [team for team in home_team if team != team_home]
             team_away = st.selectbox("🟥 _**Choose an away team**_", team_away_list, key= "laliga_away_team")
             for team_name in team_away_list:
                 if team_name == team_away:
-                    image_laliga_team = Image.open(f'../img_laliga/{team_name}.jpg')
+                    image_laliga_team = Image.open(f'img_laliga/{team_name}.jpg')
                     st.image(image_laliga_team)
 
 
@@ -356,7 +356,7 @@ if page == 'Prediction Tools':
             # response = requests.post("http://127.0.0.1:8000/predict/matchoutcome/epl", json=input_data)
             # response = requests.post("http://backend:8000/predict/matchoutcome/epl", json=input_data)
             # NEW (Render-friendly)
-            response = requests.post("https://backend-qhog.onrender.com/predict/matchoutcome/epl", json=input_data)
+            response = requests.post("https://backend-qhog.onrender.com/predict/matchoutcome/laliga", json=input_data)
 
             if response.status_code == 200:
                 result = response.json()
