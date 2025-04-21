@@ -13,7 +13,9 @@ from streamlit_option_menu import option_menu
 
 
 def clean_categories(X):
-    return X.applymap(lambda x: x.lower().replace(" ", "_") if isinstance(x, str) else x)
+    for col in X.select_dtypes(include='object').columns:
+        X[col] = X[col].str.lower().str.replace(" ", "_")
+    return X
 
 # Set up UI
 st.set_page_config(layout="centered", initial_sidebar_state='expanded')
@@ -88,8 +90,10 @@ if page == "Home":
 if page == 'Prediction Tools':
 
     st.sidebar.markdown("#### 🔩 Select your prediction tool:")
-    option = st.sidebar.selectbox("", ['Match Outcome', 'Scoring Positions'])
-    
+    option = st.sidebar.selectbox("Select prediction tool",
+    ['Match Outcome', 'Scoring Positions'],
+    label_visibility="collapsed")
+
     if option == 'Match Outcome':
         if option == 'Match Outcome':   
             selection = st.selectbox(
