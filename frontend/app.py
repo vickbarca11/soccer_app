@@ -233,7 +233,7 @@ if page == 'Prediction Tools':
                 probability = result['prediction']
             
                 epl_match_prob_container.markdown(
-                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Probability:</strong> "
+                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Prob for {team_home}:</strong> "
                 f"<span style='color:#EF0107; font-size: 1.5em'>{probability:.2%}</span></div>",
                 unsafe_allow_html=True
             )
@@ -368,7 +368,7 @@ if page == 'Prediction Tools':
                 # st.markdown(f"### 🎯 Probability of Winning: <span style='color:red'>{probability:.2%}</span>", unsafe_allow_html=True)
             
                 laliga_match_prob_container.markdown(
-                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Probability:</strong> "
+                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Prob for {team_home}:</strong> "
                 f"<span style='color:#EF0107; font-size: 1.5em'>{probability:.2%}</span></div>",
                 unsafe_allow_html=True
             )
