@@ -64,7 +64,7 @@ if page == "Home":
         image_table = Image.open('img/epl_match_app_bottom.png')
         st.image(image_table)
 
-        st.write("_**Inputting all the features from the match, our application favors Newcastle winning at 54.18%**_")
+        st.write("_**Inputting all the features from the match, our application favored Newcastle winning at 55.72%**_")
 
     st.markdown("#### _**What Shapes Goal Scoring Predictions?**_")
     st.write("Factors like a player's role, shooting position, team they represent, historical trends, or even the minute in a match all play a part " \
@@ -77,7 +77,7 @@ if page == "Home":
         st.image(image_rice_goal)
         st.write("_**Arsenal's Declan Rice, scored this goal on March 9th against Manchester United " \
         "during a regular season match. The goal was scored on the 73rd minute during a regular play. " \
-        "Adjusting the features on our application, we see that the probability of scoring was about 54.36%.**_")
+        "Adjusting the features on our application, we found the probability of scoring at 53.67%.**_")
 
     with col2:
         image_app_top = Image.open('img/epl_match_ars_goal_app_top.png')

@@ -39,16 +39,17 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 
 | **Name**           | **Non-Null Values** | **Type**   | **Description**                                               |
 |--------------------|---------------------|------------|---------------------------------------------------------------|
-| `position_away`    | 1133 non-null       | float64    | The current standing of the away team                         |
-| `position_home`    | 1133 non-null       | float64    | The current standing of the home team                         |
-| `winner_home`      | 1133 non-null       | int32      | If the home team won that match                               |
-| `match_temperature`  | 1133 non-null       | float64    | The temperature recorded that match                         |
-| `wind_speed`       | 1133 non-null       | float64    | The speed of winds                                            |
-| `humidity`         | 1133 non-null       | float64    | Percentage of humidity                                        |
-| `pressure`         | 1133 non-null       | float64    | The amount of atmospheric pressure                            |
-| `clouds`           | 1133 non-null       | float64    | Percentage of cloud coverage                                  |
-| `name`             | 1133 non-null       | object     | The name of the pitch the match was played on                |
-| `time_of_day`      | 1133 non-null       | object     | Earlier or later games (before or after 2:30pm)              |
+| `position_away`    | 1160 non-null       | float64    | The current standing of the away team                         |
+| `position_home`    | 1160 non-null       | float64    | The current standing of the home team                         |
+| `winner_home`      | 1160 non-null       | int32      | If the home team won that match                               |
+| `match_temperature`| 1160 non-null       | float64    | The temperature recorded that match                         |
+| `wind_speed`       | 1160 non-null       | float64    | The speed of winds                                            |
+| `humidity`         | 1160 non-null       | float64    | Percentage of humidity                                        |
+| `pressure`         | 1160 non-null       | float64    | The amount of atmospheric pressure                            |
+| `clouds`           | 1160 non-null       | float64    | Percentage of cloud coverage                                  |
+| `team_name_home`   | 1160 non-null       | object     | The name of the home team                                     |
+| `team_name_away`   | 1160 non-null       | object     | The name of the away team               |
+| `time_of_day`      | 1160 non-null       | object     | Earlier or later games (before or after 3:00pm)              |
 
 
 ## Statsbomb
@@ -82,7 +83,6 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 9. Time of day column was created to divide games that were before or after 2:30pm. 
 10. Null values for position at home and winner at home were dropped. 
 11. Winner at home data type was changed to integer. 
-12. Rows where stadiums value coutns were less than were also removed.
 
 ## Statsbombpy
 1. The dataset gathered was from the statsbombby open data for the English Premier League 2015/2016 season.
@@ -102,12 +102,14 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 #### Dividing the dataset into X and y:
 - **Features (`X` and `y`)**:
     ```python
-    X = team_shortened[['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'name', 'time_of_day']]
+    X = team_shortened[['position_away', 'position_home', 'match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds', 'team_name_home','team_name_away', 'time_of_day']]
     y = team_shortened['winner_home']
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2
     )
+    X_test.shape
+
     ```
 #### Constructing a pipeline for ease of cleaning and transformation:
 - **Pipeline**:
@@ -115,7 +117,7 @@ The dataset gathered had multiple lines of data, but the actual model was only f
     # First, let's pick out which columns are numeric vs. categorical
     numeric_features = ['match_temperature', 'wind_speed', 'humidity', 'pressure', 'clouds']
 
-    categorical_features = ['position_away', 'position_home', 'name', 'time_of_day']
+    categorical_features = ['team_name_home', 'team_name_away', 'position_away', 'position_home', 'time_of_day']
 
     numeric_transformer = Pipeline([
         ("imputer", SimpleImputer(strategy="mean")),   # Fill missing with mean
@@ -172,8 +174,9 @@ The dataset gathered had multiple lines of data, but the actual model was only f
     print("MSE scores for each fold:", mse_scores)
     print("Average MSE:", np.mean(mse_scores))
     ```
-    #### MSE scores for each fold: [0.36971831 0.33922261 0.39929329 0.34275618]
-    #### Average MSE: 0.36274759866620215
+    #### MSE scores for each fold: [0.36896552 0.34827586 0.41034483 0.36896552]
+    #### Average MSE: 0.37413793103448273
+
 
 ## Statsbombpy
 ### English Premier League Goal Scoring: 
@@ -259,20 +262,20 @@ The dataset gathered had multiple lines of data, but the actual model was only f
 ![alt text](frontend/img/epl_match_table_top.png) ![alt text](frontend/img/epl_match_table_bottom.png)
 ![alt text](frontend/img/epl_match_hum_press.png)
 #### Current Weather Updates at 1:30pm
-* Home Stadium: St. James' Park
+* Home Stadium: St. James' Park, Newcastle's home stadium
 * Temperature: 14C
 * Wind Speeds: 24km/hr --> 6.67m/s
 * Humidty: 41%
 * Pressure: 1008.13mb
 * Cloud Coverage: Seems clear ~ 0%
-### The two images above were captured around 1:30pm (EST) on April 16th, 1 hour before the start of the match. Newcastle United is hosting Crystal Palace at their home stadium. Newcastle United is ranked 4th in the table, while Crystal Palace is ranked 12th. The probability online shows in favor of Newcastle United winning at 58%. The app below with defined parameters as close as possible show us the probability of Newcastle winning at 54.18%. 
+### The two images above were captured around 1:30pm (EST) on April 16th, 1 hour before the start of the match. Newcastle United is hosting Crystal Palace at their home stadium. Newcastle United is ranked 4th in the table, while Crystal Palace is ranked 12th. The probability online shows in favor of Newcastle United winning at 58%. The app below with defined parameters as close as possible show us the probability of Newcastle winning at 55.72%. 
 
 ![alt text](frontend/img/epl_match_app_top.png) ![alt text](frontend/img/epl_match_app_bottom.png)
 
 ## English Premier League Goal Scoring Predictions:
 ![alt text](frontend/img/epl_match_ars_goal.png)
 
-### This goal was scored by Arsenal's Declan Rice on March 9th against Manchester United during a regular premier league season match. The goal was scored between the 73rd and 74th minute, by Declan Rice (midfielder) during a regular play. Adjusting the parameters below to match this play as close as possible, we see that the probability of scoring was about 54.36% for this shot. 
+### This goal was scored by Arsenal's Declan Rice on March 9th against Manchester United during a regular premier league season match. The goal was scored between the 73rd and 74th minute, by Declan Rice (midfielder) during a regular play. Adjusting the parameters below to match this play as close as possible, we see that the probability of scoring was about 53.67% for this shot. 
 
 ![alt text](frontend/img/epl_match_ars_goal_app_top.png) ![alt text](frontend/img/epl_match_ars_goal_app_bottom.png)
 
