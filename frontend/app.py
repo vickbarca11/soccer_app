@@ -91,290 +91,8 @@ if page == 'Prediction Tools':
 
     st.sidebar.markdown("#### 🔩 Select your prediction tool:")
     option = st.sidebar.selectbox("Select prediction tool",
-    ['Match Outcome', 'Scoring Positions'],
+    ['Scoring Positions', 'Match Outcome'],
     label_visibility="collapsed")
-
-    if option == 'Match Outcome':
-        if option == 'Match Outcome':   
-            selection = st.selectbox(
-                "Choose your favorite league",
-                ("English Premier League", "La Liga")
-        )
-
-        match_prob_container = st.empty()
-
-        if selection == "English Premier League":
-
-            # Sticky container style and empty slot for EPL
-            st.markdown("""
-            <style>
-                .sticky-prob {
-                    position: fixed;
-                    top: 80px;
-                    right: 30px;
-                    width: 280px;
-                    background-color: #063672; /* Updated background */
-                    color: white; /* Text color */
-                    padding: 15px;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-                    z-index: 9999;
-                    text-align: center;
-                    font-family: 'Segoe UI', sans-serif;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-            
-            epl_match_prob_container = st.empty()
-            image = Image.open('img/epl.jpg')
-            st.image(image)
-
-            # Load trained model pipeline
-            model = joblib.load("eplmatches5ymodel_rf.pkl")
-
-            st.markdown("###### Adjust the parameters below to see how the features affect the probability of the home team winning.")
-
-            important_features = st.checkbox("_Check this box to see the amout of influence the features have on the model "
-            "(it will not affect the model's prediction if you click here):_", value=False, key="epl_win_prob_feature_importance")
-
-            if important_features == True:
-                ## Feature Importances
-                numeric_features = ['match_temperature', 'wind_speed',	'humidity',	'pressure',	'clouds']
-                categorical_features = ['team_name_home', 'team_name_away', 'position_away', 'position_home', 'time_of_day']
-
-                importances = model.named_steps['classifier'].feature_importances_
-                feature_names = numeric_features + (model.named_steps['preprocessor'].transformers_[1][1].named_steps['encoder'].get_feature_names_out(categorical_features).tolist())
-                
-                # Clean feature names
-                def clean_name(name):
-                    name = name.lower()
-                    if 'name_' in name:
-                        name = name.replace('name_', '')
-                    return name.replace('_', ' ')
-
-            
-                # Sort by importance
-                sorted_idx = np.argsort(importances)
-                sorted_importances = importances[sorted_idx]
-                sorted_features = [clean_name(feature_names[i]) for i in sorted_idx]
-
-                # Dark mode styling
-                plt.style.use('dark_background')
-                fig, ax = plt.subplots(figsize=(10, len(sorted_features) * 0.3))
-                ax.set_facecolor('#063672')  
-                fig.patch.set_facecolor('#063672')
-
-                # Draw lollipop chart
-                ax.hlines(y=sorted_features, xmin=0, xmax=sorted_importances, color='#444', linewidth=1)
-                ax.plot(sorted_importances, sorted_features, "o", markersize=10, color='#EF0107') 
-
-                # Axes and labels
-                ax.set_xlabel("Feature Importance", fontsize=12, color='white')
-                ax.set_title("Feature Importances", fontsize=14, color='white', weight='bold')
-                ax.tick_params(colors='white', labelsize=10)
-                ax.grid(axis='x', linestyle='--', alpha=0.3, color='white')
-                fig.tight_layout()
-
-                # Streamlit:
-                st.pyplot(fig)
-
-            # Options for widgets
-            home_team = ['Arsenal', 'AFC Bournemouth', 'Aston Villa', 'Brentford',
-             'Brighton & Hove Albion', 'Burnley', 'Chelsea', 'Crystal Palace',
-             'Everton', 'Fulham', 'Ipswich Town', 'Leeds United', 'Leicester City',
-             'Liverpool', 'Luton Town', 'Manchester City', 'Manchester United',
-             'Newcastle United', 'Norwich City', 'Nottingham Forest', 'Sheffield United',
-             'Southampton', 'Tottenham Hotspur', 'Watford', 'West Ham United',
-             'Wolverhampton Wanderers']
-
-            time_in_day = ['earlier', 'later']
-            
-            # Streamlit widgets
-            
-            # Streamlit widgets
-            team_home = st.selectbox("⬜ _**Choose a home_team**_", home_team, key= "epl_home_team")
-
-            for team_name in home_team:
-                if team_home == team_name:
-                    image_epl_team = Image.open(f'img_epl/{team_name}.jpg')
-                    st.image(image_epl_team)
-
-            team_away_list = [team for team in home_team if team != team_home]
-            team_away = st.selectbox("🟥 _**Choose an away team**_", team_away_list, key= "epl_away_team")
-
-            for team_name in team_away_list:
-                if team_name == team_away:
-                    image_epl_team = Image.open(f'img_epl/{team_name}.jpg')
-                    st.image(image_epl_team)
-
-            home_position = st.selectbox("⬜ _**Choose the home team's current standing on the table:**_", np.arange(1,21,1).astype(float), key= "epl_home_position")
-            away_position_list = [float(i) for i in range(1,21) if i != home_position] 
-            away_position = st.selectbox("🟥 _**Choose the away team's current standing on the table:**_", away_position_list, key= "epl_away_position")
-
-            match_temp = st.slider("🌡️ _**Choose temperature at the start of the match (Celsius):**_", -10.68, 33.06, 11.0, key="epl_match_temp")
-            wind_speeds = st.slider("🌀 _**Choose the wind speed at the start of the match (meters/second):**_", 0.95, 20.12, 6.0, key="epl_wind_speeds")
-            humidity_level = st.slider("🌫️ _**Choose the humidity percentage at the start of the match:**_", 20.0, 100.00, 70.0, key="epl_humidity")
-            pressure_amount = st.slider("🥵 _**Choose the atmospheric pressure at the start of the match (millibars):**_", 964.0, 1043.0, 1014.0, key="epl_pressure")
-            cloudiness = st.slider("☁️ _**Choose the percentage of cloud coverage at the start of the match:**_", 0.0, 100.0, 69.0, key="epl_cloudiness")
-            
-            time = st.selectbox("⌛ _**Choose if the match was played earlier in the day (before or at 3:00pm) or later in day (after 3:00pm):**_", time_in_day, key="epl_match_time")
-
-            input_data = {'position_away':away_position, 'position_home':home_position, 'match_temperature':match_temp, 'wind_speed':wind_speeds, 
-                        'humidity':humidity_level, 'pressure':pressure_amount, 'clouds':cloudiness, 'team_name_home':team_home, 'team_name_away':team_away, 'time_of_day':time}
-
-            # Send request to FastAPI
-            # response = requests.post("http://127.0.0.1:8000/predict/matchoutcome/epl", json=input_data)
-            # response = requests.post("http://backend:8000/predict/matchoutcome/epl", json=input_data)
-            # NEW (Render-friendly)
-            response = requests.post("https://backend-qhog.onrender.com/predict/matchoutcome/epl", json=input_data)
-
-            if response.status_code == 200:
-                result = response.json()
-                probability = result['prediction']
-            
-                epl_match_prob_container.markdown(
-                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Prob for {team_home}:</strong> "
-                f"<span style='color:#EF0107; font-size: 1.5em'>{probability:.2%}</span></div>",
-                unsafe_allow_html=True
-            )
-            else:
-                st.error("Something went wrong")
-                st.write(response.status_code)
-
-        
-        if selection == "La Liga":
-
-            # Sticky container style and empty slot for EPL
-            st.markdown("""
-            <style>
-                .sticky-prob {
-                    position: fixed;
-                    top: 80px;
-                    right: 30px;
-                    width: 280px;
-                    background-color: #063672; /* Updated background */
-                    color: white; /* Text color */
-                    padding: 15px;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-                    z-index: 9999;
-                    text-align: center;
-                    font-family: 'Segoe UI', sans-serif;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-            
-            laliga_match_prob_container = st.empty()
-            image = Image.open('img/laliga.jpg')
-            st.image(image)
-
-            # Load trained model pipeline
-            model = joblib.load("laligamatches5ymodel_rf.pkl")
-
-            st.markdown("###### Adjust the parameters below to see how the features affect the probability of the home team winning.")
-
-            important_features = st.checkbox("_Check this box to see the amout of influence the features have on the model "
-            "(it will not affect the model's prediction if you click here):_", value=False, key="laliga_win_prob_feature_importance")
-
-            if important_features == True:
-                ## Feature Importances
-                numeric_features = ['match_temperature', 'wind_speed',	'humidity',	'pressure',	'clouds']
-                categorical_features = ['team_name_home', 'team_name_away', 'position_away', 'position_home', 'time_of_day']
-
-                importances = model.named_steps['classifier'].feature_importances_
-                feature_names = numeric_features + (model.named_steps['preprocessor'].transformers_[1][1].named_steps['encoder'].get_feature_names_out(categorical_features).tolist())
-                
-                # Clean feature names
-                def clean_name(name):
-                    name = name.lower()
-                    if 'name_' in name:
-                        name = name.replace('name_', '')
-                    return name.replace('_', ' ')
-
-            
-                # Sort by importance
-                sorted_idx = np.argsort(importances)
-                sorted_importances = importances[sorted_idx]
-                sorted_features = [clean_name(feature_names[i]) for i in sorted_idx]
-
-                # Dark mode styling
-                plt.style.use('dark_background')
-                fig, ax = plt.subplots(figsize=(10, len(sorted_features) * 0.3))
-                ax.set_facecolor('#063672')  
-                fig.patch.set_facecolor('#063672')
-
-                # Draw lollipop chart
-                ax.hlines(y=sorted_features, xmin=0, xmax=sorted_importances, color='#444', linewidth=1)
-                ax.plot(sorted_importances, sorted_features, "o", markersize=10, color='#EF0107') 
-
-                # Axes and labels
-                ax.set_xlabel("Feature Importance", fontsize=12, color='white')
-                ax.set_title("Feature Importances", fontsize=14, color='white', weight='bold')
-                ax.tick_params(colors='white', labelsize=10)
-                ax.grid(axis='x', linestyle='--', alpha=0.3, color='white')
-                fig.tight_layout()
-
-                # Streamlit:
-                st.pyplot(fig)
-
-            home_team = ['FC Barcelona', 'Almería', 'Athletic Club', 'Atlético Madrid', 'Cádiz', 'Celta de Vigo',
-                 'Deportivo Alavés', 'Elche', 'Espanyol', 'Getafe',
-                 'Girona', 'Granada', 'Las Palmas', 'Leganés', 'Mallorca', 'Osasuna',
-                 'Rayo Vallecano', 'Real Betis', 'Real Madrid', 'Real Sociedad',
-                 'Real Valladolid', 'Sevilla', 'Valencia', 'Villarreal']
-
-            time_in_day = ['earlier', 'later']
-            
-            # Streamlit widgets
-            
-            team_home = st.selectbox("⬜ _**Choose a home_team**_", home_team, key= "laliga_home_team")
-            for team_name in home_team:
-                if team_home == team_name:
-                    image_laliga_team = Image.open(f'img_laliga/{team_name}.jpg')
-                    st.image(image_laliga_team)
-
-            team_away_list = [team for team in home_team if team != team_home]
-            team_away = st.selectbox("🟥 _**Choose an away team**_", team_away_list, key= "laliga_away_team")
-            for team_name in team_away_list:
-                if team_name == team_away:
-                    image_laliga_team = Image.open(f'img_laliga/{team_name}.jpg')
-                    st.image(image_laliga_team)
-
-
-            home_position = st.selectbox("⬜ _**Choose the home team's current standing on the table:**_", np.arange(1,21,1).astype(float), key="laliga_home_position")
-            away_position_list = [float(i) for i in range(1,21) if i != home_position] 
-            away_position = st.selectbox("🟥 _**Choose the away team's current standing on the table:**_", away_position_list, key="laliga_away_position")
-
-            match_temp = st.slider("🌡️ _**Choose temperature at the start of the match (Celsius):**_", -0.81, 36.86, 18.0, key="laliga_match_temp")
-            wind_speeds = st.slider("🌀 _**Choose the wind speed at the start of the match (meters/second):**_", 0.71, 18.05, 5.0, key="laliga_wind_speeds")
-            humidity_level = st.slider("🌫️ _**Choose the humidity percentage at the start of the match:**_", 14.0, 100.00, 58.0, key="laliga_humidity")
-            pressure_amount = st.slider("🥵 _**Choose the atmospheric pressure at the start of the match (millibars):**_", 983.0, 1046.0, 1017.0, key="laliga_pressure")
-            cloudiness = st.slider("☁️ _**Choose the percentage of cloud coverage at the start of the match:**_", 0.0, 100.0, 53.0, key="laliga_cloudiness")
-            
-            time = st.selectbox("⌛ _**Choose if the match was played earlier in the day (before or at 5:00pm) or later in day (after 5:00pm):**_", time_in_day, key="laliga_match_time")
-
-            input_data = {'position_away':away_position, 'position_home':home_position, 'match_temperature':match_temp, 'wind_speed':wind_speeds, 
-                        'humidity':humidity_level, 'pressure':pressure_amount, 'clouds':cloudiness, 'team_name_home':team_home, 'team_name_away':team_away, 'time_of_day':time}
-
-            # Send request to FastAPI
-            # response = requests.post("http://127.0.0.1:8000/predict/matchoutcome/epl", json=input_data)
-            # response = requests.post("http://backend:8000/predict/matchoutcome/epl", json=input_data)
-            # NEW (Render-friendly)
-            response = requests.post("https://backend-qhog.onrender.com/predict/matchoutcome/laliga", json=input_data)
-
-            if response.status_code == 200:
-                result = response.json()
-                probability = result['prediction']
-                # st.markdown(f"### 🎯 Probability of Winning: <span style='color:red'>{probability:.2%}</span>", unsafe_allow_html=True)
-            
-                laliga_match_prob_container.markdown(
-                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Prob for {team_home}:</strong> "
-                f"<span style='color:#EF0107; font-size: 1.5em'>{probability:.2%}</span></div>",
-                unsafe_allow_html=True
-            )
-            else:
-                st.error("Something went wrong")
-                st.write(response.status_code)
 
     if option == "Scoring Positions":
         image_display = st.empty()
@@ -801,6 +519,288 @@ if page == 'Prediction Tools':
                 messi_prob_container.markdown(
                 f"<div class='sticky-prob'>⚽ <strong>Messi - Scoring Probability:</strong> "
                 f"<span style='color:red; font-size: 1.5em'>{probability:.2%}</span></div>",
+                unsafe_allow_html=True
+            )
+            else:
+                st.error("Something went wrong")
+                st.write(response.status_code)
+
+    if option == 'Match Outcome':
+        if option == 'Match Outcome':   
+            selection = st.selectbox(
+                "Choose your favorite league",
+                ("English Premier League", "La Liga")
+        )
+
+        match_prob_container = st.empty()
+
+        if selection == "English Premier League":
+
+            # Sticky container style and empty slot for EPL
+            st.markdown("""
+            <style>
+                .sticky-prob {
+                    position: fixed;
+                    top: 80px;
+                    right: 30px;
+                    width: 280px;
+                    background-color: #063672; /* Updated background */
+                    color: white; /* Text color */
+                    padding: 15px;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                    z-index: 9999;
+                    text-align: center;
+                    font-family: 'Segoe UI', sans-serif;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+            
+            epl_match_prob_container = st.empty()
+            image = Image.open('img/epl.jpg')
+            st.image(image)
+
+            # Load trained model pipeline
+            model = joblib.load("eplmatches5ymodel_rf.pkl")
+
+            st.markdown("###### Adjust the parameters below to see how the features affect the probability of the home team winning.")
+
+            important_features = st.checkbox("_Check this box to see the amout of influence the features have on the model "
+            "(it will not affect the model's prediction if you click here):_", value=False, key="epl_win_prob_feature_importance")
+
+            if important_features == True:
+                ## Feature Importances
+                numeric_features = ['match_temperature', 'wind_speed',	'humidity',	'pressure',	'clouds']
+                categorical_features = ['team_name_home', 'team_name_away', 'position_away', 'position_home', 'time_of_day']
+
+                importances = model.named_steps['classifier'].feature_importances_
+                feature_names = numeric_features + (model.named_steps['preprocessor'].transformers_[1][1].named_steps['encoder'].get_feature_names_out(categorical_features).tolist())
+                
+                # Clean feature names
+                def clean_name(name):
+                    name = name.lower()
+                    if 'name_' in name:
+                        name = name.replace('name_', '')
+                    return name.replace('_', ' ')
+
+            
+                # Sort by importance
+                sorted_idx = np.argsort(importances)
+                sorted_importances = importances[sorted_idx]
+                sorted_features = [clean_name(feature_names[i]) for i in sorted_idx]
+
+                # Dark mode styling
+                plt.style.use('dark_background')
+                fig, ax = plt.subplots(figsize=(10, len(sorted_features) * 0.3))
+                ax.set_facecolor('#063672')  
+                fig.patch.set_facecolor('#063672')
+
+                # Draw lollipop chart
+                ax.hlines(y=sorted_features, xmin=0, xmax=sorted_importances, color='#444', linewidth=1)
+                ax.plot(sorted_importances, sorted_features, "o", markersize=10, color='#EF0107') 
+
+                # Axes and labels
+                ax.set_xlabel("Feature Importance", fontsize=12, color='white')
+                ax.set_title("Feature Importances", fontsize=14, color='white', weight='bold')
+                ax.tick_params(colors='white', labelsize=10)
+                ax.grid(axis='x', linestyle='--', alpha=0.3, color='white')
+                fig.tight_layout()
+
+                # Streamlit:
+                st.pyplot(fig)
+
+            # Options for widgets
+            home_team = ['Arsenal', 'AFC Bournemouth', 'Aston Villa', 'Brentford',
+             'Brighton & Hove Albion', 'Burnley', 'Chelsea', 'Crystal Palace',
+             'Everton', 'Fulham', 'Ipswich Town', 'Leeds United', 'Leicester City',
+             'Liverpool', 'Luton Town', 'Manchester City', 'Manchester United',
+             'Newcastle United', 'Norwich City', 'Nottingham Forest', 'Sheffield United',
+             'Southampton', 'Tottenham Hotspur', 'Watford', 'West Ham United',
+             'Wolverhampton Wanderers']
+
+            time_in_day = ['earlier', 'later']
+            
+            # Streamlit widgets
+            
+            # Streamlit widgets
+            team_home = st.selectbox("⬜ _**Choose a home_team**_", home_team, key= "epl_home_team")
+
+            for team_name in home_team:
+                if team_home == team_name:
+                    image_epl_team = Image.open(f'img_epl/{team_name}.jpg')
+                    st.image(image_epl_team)
+
+            team_away_list = [team for team in home_team if team != team_home]
+            team_away = st.selectbox("🟥 _**Choose an away team**_", team_away_list, key= "epl_away_team")
+
+            for team_name in team_away_list:
+                if team_name == team_away:
+                    image_epl_team = Image.open(f'img_epl/{team_name}.jpg')
+                    st.image(image_epl_team)
+
+            home_position = st.selectbox("⬜ _**Choose the home team's current standing on the table:**_", np.arange(1,21,1).astype(float), key= "epl_home_position")
+            away_position_list = [float(i) for i in range(1,21) if i != home_position] 
+            away_position = st.selectbox("🟥 _**Choose the away team's current standing on the table:**_", away_position_list, key= "epl_away_position")
+
+            match_temp = st.slider("🌡️ _**Choose temperature at the start of the match (Celsius):**_", -10.68, 33.06, 11.0, key="epl_match_temp")
+            wind_speeds = st.slider("🌀 _**Choose the wind speed at the start of the match (meters/second):**_", 0.95, 20.12, 6.0, key="epl_wind_speeds")
+            humidity_level = st.slider("🌫️ _**Choose the humidity percentage at the start of the match:**_", 20.0, 100.00, 70.0, key="epl_humidity")
+            pressure_amount = st.slider("🥵 _**Choose the atmospheric pressure at the start of the match (millibars):**_", 964.0, 1043.0, 1014.0, key="epl_pressure")
+            cloudiness = st.slider("☁️ _**Choose the percentage of cloud coverage at the start of the match:**_", 0.0, 100.0, 69.0, key="epl_cloudiness")
+            
+            time = st.selectbox("⌛ _**Choose if the match was played earlier in the day (before or at 3:00pm) or later in day (after 3:00pm):**_", time_in_day, key="epl_match_time")
+
+            input_data = {'position_away':away_position, 'position_home':home_position, 'match_temperature':match_temp, 'wind_speed':wind_speeds, 
+                        'humidity':humidity_level, 'pressure':pressure_amount, 'clouds':cloudiness, 'team_name_home':team_home, 'team_name_away':team_away, 'time_of_day':time}
+
+            # Send request to FastAPI
+            # response = requests.post("http://127.0.0.1:8000/predict/matchoutcome/epl", json=input_data)
+            # response = requests.post("http://backend:8000/predict/matchoutcome/epl", json=input_data)
+            # NEW (Render-friendly)
+            response = requests.post("https://backend-qhog.onrender.com/predict/matchoutcome/epl", json=input_data)
+
+            if response.status_code == 200:
+                result = response.json()
+                probability = result['prediction']
+            
+                epl_match_prob_container.markdown(
+                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Prob for {team_home}:</strong> "
+                f"<span style='color:#EF0107; font-size: 1.5em'>{probability:.2%}</span></div>",
+                unsafe_allow_html=True
+            )
+            else:
+                st.error("Something went wrong")
+                st.write(response.status_code)
+
+        
+        if selection == "La Liga":
+
+            # Sticky container style and empty slot for EPL
+            st.markdown("""
+            <style>
+                .sticky-prob {
+                    position: fixed;
+                    top: 80px;
+                    right: 30px;
+                    width: 280px;
+                    background-color: #063672; /* Updated background */
+                    color: white; /* Text color */
+                    padding: 15px;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                    z-index: 9999;
+                    text-align: center;
+                    font-family: 'Segoe UI', sans-serif;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+            
+            laliga_match_prob_container = st.empty()
+            image = Image.open('img/laliga.jpg')
+            st.image(image)
+
+            # Load trained model pipeline
+            model = joblib.load("laligamatches5ymodel_rf.pkl")
+
+            st.markdown("###### Adjust the parameters below to see how the features affect the probability of the home team winning.")
+
+            important_features = st.checkbox("_Check this box to see the amout of influence the features have on the model "
+            "(it will not affect the model's prediction if you click here):_", value=False, key="laliga_win_prob_feature_importance")
+
+            if important_features == True:
+                ## Feature Importances
+                numeric_features = ['match_temperature', 'wind_speed',	'humidity',	'pressure',	'clouds']
+                categorical_features = ['team_name_home', 'team_name_away', 'position_away', 'position_home', 'time_of_day']
+
+                importances = model.named_steps['classifier'].feature_importances_
+                feature_names = numeric_features + (model.named_steps['preprocessor'].transformers_[1][1].named_steps['encoder'].get_feature_names_out(categorical_features).tolist())
+                
+                # Clean feature names
+                def clean_name(name):
+                    name = name.lower()
+                    if 'name_' in name:
+                        name = name.replace('name_', '')
+                    return name.replace('_', ' ')
+
+            
+                # Sort by importance
+                sorted_idx = np.argsort(importances)
+                sorted_importances = importances[sorted_idx]
+                sorted_features = [clean_name(feature_names[i]) for i in sorted_idx]
+
+                # Dark mode styling
+                plt.style.use('dark_background')
+                fig, ax = plt.subplots(figsize=(10, len(sorted_features) * 0.3))
+                ax.set_facecolor('#063672')  
+                fig.patch.set_facecolor('#063672')
+
+                # Draw lollipop chart
+                ax.hlines(y=sorted_features, xmin=0, xmax=sorted_importances, color='#444', linewidth=1)
+                ax.plot(sorted_importances, sorted_features, "o", markersize=10, color='#EF0107') 
+
+                # Axes and labels
+                ax.set_xlabel("Feature Importance", fontsize=12, color='white')
+                ax.set_title("Feature Importances", fontsize=14, color='white', weight='bold')
+                ax.tick_params(colors='white', labelsize=10)
+                ax.grid(axis='x', linestyle='--', alpha=0.3, color='white')
+                fig.tight_layout()
+
+                # Streamlit:
+                st.pyplot(fig)
+
+            home_team = ['FC Barcelona', 'Almería', 'Athletic Club', 'Atlético Madrid', 'Cádiz', 'Celta de Vigo',
+                 'Deportivo Alavés', 'Elche', 'Espanyol', 'Getafe',
+                 'Girona', 'Granada', 'Las Palmas', 'Leganés', 'Mallorca', 'Osasuna',
+                 'Rayo Vallecano', 'Real Betis', 'Real Madrid', 'Real Sociedad',
+                 'Real Valladolid', 'Sevilla', 'Valencia', 'Villarreal']
+
+            time_in_day = ['earlier', 'later']
+            
+            # Streamlit widgets
+            
+            team_home = st.selectbox("⬜ _**Choose a home_team**_", home_team, key= "laliga_home_team")
+            for team_name in home_team:
+                if team_home == team_name:
+                    image_laliga_team = Image.open(f'img_laliga/{team_name}.jpg')
+                    st.image(image_laliga_team)
+
+            team_away_list = [team for team in home_team if team != team_home]
+            team_away = st.selectbox("🟥 _**Choose an away team**_", team_away_list, key= "laliga_away_team")
+            for team_name in team_away_list:
+                if team_name == team_away:
+                    image_laliga_team = Image.open(f'img_laliga/{team_name}.jpg')
+                    st.image(image_laliga_team)
+
+
+            home_position = st.selectbox("⬜ _**Choose the home team's current standing on the table:**_", np.arange(1,21,1).astype(float), key="laliga_home_position")
+            away_position_list = [float(i) for i in range(1,21) if i != home_position] 
+            away_position = st.selectbox("🟥 _**Choose the away team's current standing on the table:**_", away_position_list, key="laliga_away_position")
+
+            match_temp = st.slider("🌡️ _**Choose temperature at the start of the match (Celsius):**_", -0.81, 36.86, 18.0, key="laliga_match_temp")
+            wind_speeds = st.slider("🌀 _**Choose the wind speed at the start of the match (meters/second):**_", 0.71, 18.05, 5.0, key="laliga_wind_speeds")
+            humidity_level = st.slider("🌫️ _**Choose the humidity percentage at the start of the match:**_", 14.0, 100.00, 58.0, key="laliga_humidity")
+            pressure_amount = st.slider("🥵 _**Choose the atmospheric pressure at the start of the match (millibars):**_", 983.0, 1046.0, 1017.0, key="laliga_pressure")
+            cloudiness = st.slider("☁️ _**Choose the percentage of cloud coverage at the start of the match:**_", 0.0, 100.0, 53.0, key="laliga_cloudiness")
+            
+            time = st.selectbox("⌛ _**Choose if the match was played earlier in the day (before or at 5:00pm) or later in day (after 5:00pm):**_", time_in_day, key="laliga_match_time")
+
+            input_data = {'position_away':away_position, 'position_home':home_position, 'match_temperature':match_temp, 'wind_speed':wind_speeds, 
+                        'humidity':humidity_level, 'pressure':pressure_amount, 'clouds':cloudiness, 'team_name_home':team_home, 'team_name_away':team_away, 'time_of_day':time}
+
+            # Send request to FastAPI
+            # response = requests.post("http://127.0.0.1:8000/predict/matchoutcome/epl", json=input_data)
+            # response = requests.post("http://backend:8000/predict/matchoutcome/epl", json=input_data)
+            # NEW (Render-friendly)
+            response = requests.post("https://backend-qhog.onrender.com/predict/matchoutcome/laliga", json=input_data)
+
+            if response.status_code == 200:
+                result = response.json()
+                probability = result['prediction']
+                # st.markdown(f"### 🎯 Probability of Winning: <span style='color:red'>{probability:.2%}</span>", unsafe_allow_html=True)
+            
+                laliga_match_prob_container.markdown(
+                f"<div class='sticky-prob'>⚽ <strong>EPL - Winning Prob for {team_home}:</strong> "
+                f"<span style='color:#EF0107; font-size: 1.5em'>{probability:.2%}</span></div>",
                 unsafe_allow_html=True
             )
             else:
